@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@capacitor/android": "^8.1.0",
+    "@capacitor/app": "^8.0.1",
+    "@capacitor/browser": "^8.0.1",
     "@capacitor/core": "^8.1.0",
     "@capacitor/push-notifications": "^8.0.1",
     "@dnd-kit/core": "^6.3.1",

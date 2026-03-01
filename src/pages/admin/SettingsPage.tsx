@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { DAY_LABELS } from '@/lib/constants'
+import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { Copy, Plus } from 'lucide-react'
 
 export default function SettingsPage() {
   const { settings, isLoading, fetchSettings, updateSettings } = useSettingsStore()
@@ -16,8 +18,30 @@ export default function SettingsPage() {
   const [gridSnap, setGridSnap] = useState(15)
   const [isSaving, setIsSaving] = useState(false)
 
+  // Academy code management
+  const [academyCode, setAcademyCode] = useState('')
+  const [academyName, setAcademyName] = useState('')
+  const [academyCodeId, setAcademyCodeId] = useState<string | null>(null)
+  const [newCode, setNewCode] = useState('')
+  const [newAcademyName, setNewAcademyName] = useState('')
+  const [isCodeSaving, setIsCodeSaving] = useState(false)
+
   useEffect(() => {
     fetchSettings()
+    // Fetch academy code
+    supabase
+      .from('academy_codes')
+      .select('*')
+      .eq('is_active', true)
+      .limit(1)
+      .single()
+      .then(({ data }) => {
+        if (data) {
+          setAcademyCodeId(data.id)
+          setAcademyCode(data.code)
+          setAcademyName(data.academy_name)
+        }
+      })
   }, [fetchSettings])
 
   // Sync local state when settings load
@@ -164,6 +188,82 @@ export default function SettingsPage() {
               </button>
             ))}
           </div>
+        </section>
+
+        {/* Academy Code Management */}
+        <section className="space-y-2">
+          <h3 className="text-sm font-semibold text-gray-900">학원 코드 (학부모 가입용)</h3>
+          {academyCodeId ? (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2.5">
+                <div className="flex-1">
+                  <p className="text-xs text-blue-600">{academyName}</p>
+                  <p className="text-lg font-mono font-bold text-blue-800 tracking-wider">
+                    {academyCode}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(academyCode)
+                    toast.success('코드가 복사되었습니다')
+                  }}
+                  className="p-2 hover:bg-blue-100 rounded-lg transition-colors"
+                >
+                  <Copy className="w-4 h-4 text-blue-600" />
+                </button>
+              </div>
+              <p className="text-xs text-gray-400">
+                이 코드를 학부모에게 안내하세요. 학부모가 앱 가입 시 이 코드를 입력해야 합니다.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Input
+                value={newAcademyName}
+                onChange={(e) => setNewAcademyName(e.target.value)}
+                placeholder="학원 이름 (예: HB Class)"
+              />
+              <div className="flex gap-2">
+                <Input
+                  value={newCode}
+                  onChange={(e) => setNewCode(e.target.value.toUpperCase())}
+                  placeholder="코드 (예: HBCLASS)"
+                  className="flex-1 font-mono"
+                />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  disabled={isCodeSaving || !newCode.trim() || !newAcademyName.trim()}
+                  onClick={async () => {
+                    setIsCodeSaving(true)
+                    try {
+                      const { data, error } = await supabase
+                        .from('academy_codes')
+                        .insert({
+                          code: newCode.trim().toUpperCase(),
+                          academy_name: newAcademyName.trim(),
+                        })
+                        .select()
+                        .single()
+                      if (error) throw error
+                      setAcademyCodeId(data.id)
+                      setAcademyCode(data.code)
+                      setAcademyName(data.academy_name)
+                      setNewCode('')
+                      setNewAcademyName('')
+                      toast.success('학원 코드가 생성되었습니다')
+                    } catch {
+                      toast.error('코드 생성에 실패했습니다')
+                    } finally {
+                      setIsCodeSaving(false)
+                    }
+                  }}
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Save */}

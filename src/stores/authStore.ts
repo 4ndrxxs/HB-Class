@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { supabase } from '@/lib/supabase'
+import { getCompletedProfile } from '@/lib/parentAuth'
 import type { Profile, Role } from '@/types'
 
 interface AuthState {
@@ -7,9 +8,11 @@ interface AuthState {
   role: Role
   isLoading: boolean
   isAuthenticated: boolean
+  onboardingNeeded: boolean
 
   initialize: () => Promise<void>
   setDevAdmin: () => void
+  setOnboardingComplete: (profile: Profile) => void
   signOut: () => Promise<void>
 }
 
@@ -19,6 +22,8 @@ const DEV_ADMIN_PROFILE: Profile = {
   role: 'admin',
   name: '관리자',
   phone: '010-0000-0000',
+  email: null,
+  academy_id: null,
   created_at: new Date().toISOString(),
 }
 
@@ -27,27 +32,39 @@ export const useAuthStore = create<AuthState>((set) => ({
   role: 'admin',
   isLoading: true,
   isAuthenticated: false,
+  onboardingNeeded: false,
 
   initialize: async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
 
       if (session?.user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
+        // 세션 있음 → 프로필 완성 여부 확인
+        const profile = await getCompletedProfile()
 
         if (profile) {
+          // 온보딩 완료된 유저
           set({
             profile,
             role: profile.role,
             isAuthenticated: true,
             isLoading: false,
+            onboardingNeeded: false,
           })
           return
         }
+
+        // 세션은 있지만 프로필 미완성 (첫 소셜 로그인)
+        set({
+          profile: null,
+          role: 'parent',
+          isAuthenticated: true,
+          isLoading: false,
+          onboardingNeeded: true,
+        })
+        return
       }
 
       // 세션 없으면 dev mode
@@ -56,6 +73,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         role: 'admin',
         isAuthenticated: true,
         isLoading: false,
+        onboardingNeeded: false,
       })
     } catch {
       // 에러 시에도 dev mode로 진입
@@ -64,6 +82,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         role: 'admin',
         isAuthenticated: true,
         isLoading: false,
+        onboardingNeeded: false,
       })
     }
   },
@@ -74,6 +93,17 @@ export const useAuthStore = create<AuthState>((set) => ({
       role: 'admin',
       isAuthenticated: true,
       isLoading: false,
+      onboardingNeeded: false,
+    })
+  },
+
+  setOnboardingComplete: (profile: Profile) => {
+    set({
+      profile,
+      role: 'parent',
+      isAuthenticated: true,
+      isLoading: false,
+      onboardingNeeded: false,
     })
   },
 
@@ -83,6 +113,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       profile: null,
       role: 'admin',
       isAuthenticated: false,
+      onboardingNeeded: false,
     })
   },
 }))

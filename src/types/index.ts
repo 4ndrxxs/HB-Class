@@ -7,7 +7,17 @@ export interface Profile {
   id: string
   role: Role
   name: string
-  phone: string
+  phone: string | null
+  email: string | null
+  academy_id: string | null
+  created_at: string
+}
+
+export interface AcademyCode {
+  id: string
+  code: string
+  academy_name: string
+  is_active: boolean
   created_at: string
 }
 

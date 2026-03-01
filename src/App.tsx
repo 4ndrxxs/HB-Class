@@ -1,23 +1,59 @@
 import { useEffect } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { Toaster } from '@/components/ui/sonner'
 import { useAuthStore } from '@/stores/authStore'
 import { initPushNotifications } from '@/lib/pushNotifications'
+import { handleAuthCallback } from '@/lib/parentAuth'
+import { Capacitor } from '@capacitor/core'
+import { App as CapApp } from '@capacitor/app'
 import WeeklyPage from '@/pages/admin/WeeklyPage'
 import MonthlyPage from '@/pages/admin/MonthlyPage'
 import StudentsPage from '@/pages/admin/StudentsPage'
 import SettingsPage from '@/pages/admin/SettingsPage'
 import ParentDashboard from '@/pages/parent/ParentDashboard'
 import ParentLogin from '@/pages/parent/ParentLogin'
-import ParentRegister from '@/pages/parent/ParentRegister'
+import ParentOnboarding from '@/pages/parent/ParentOnboarding'
 
 function App() {
-  const { isLoading, initialize } = useAuthStore()
+  const { isLoading, onboardingNeeded, profile, initialize } = useAuthStore()
+  const navigate = useNavigate()
 
   useEffect(() => {
     initialize()
     initPushNotifications()
   }, [initialize])
+
+  // Native 딥링크 리스너 (OAuth 콜백)
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return
+
+    const listener = CapApp.addListener('appUrlOpen', async (event) => {
+      if (event.url.includes('auth-callback')) {
+        try {
+          await handleAuthCallback(event.url)
+          await initialize()
+        } catch (err) {
+          console.error('Auth callback error:', err)
+          navigate('/parent/login')
+        }
+      }
+    })
+
+    return () => {
+      listener.then((l) => l.remove())
+    }
+  }, [initialize, navigate])
+
+  // Web OAuth 콜백 (개발용)
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) return
+    const hash = window.location.hash
+    if (hash && hash.includes('access_token')) {
+      handleAuthCallback(window.location.href)
+        .then(() => initialize())
+        .catch(() => navigate('/parent/login'))
+    }
+  }, [initialize, navigate])
 
   if (isLoading) {
     return (
@@ -39,11 +75,31 @@ function App() {
 
         {/* Parent routes */}
         <Route path="/parent/login" element={<ParentLogin />} />
-        <Route path="/parent/register" element={<ParentRegister />} />
-        <Route path="/parent" element={<ParentDashboard />} />
+        <Route path="/parent/onboarding" element={<ParentOnboarding />} />
+        <Route path="/parent/auth-callback" element={<AuthCallback />} />
+        <Route
+          path="/parent"
+          element={
+            onboardingNeeded ? (
+              <Navigate to="/parent/onboarding" replace />
+            ) : profile?.role === 'parent' ? (
+              <ParentDashboard />
+            ) : (
+              <Navigate to="/parent/login" replace />
+            )
+          }
+        />
       </Routes>
       <Toaster />
     </>
+  )
+}
+
+function AuthCallback() {
+  return (
+    <div className="flex items-center justify-center min-h-dvh">
+      <div className="text-muted-foreground">인증 처리 중...</div>
+    </div>
   )
 }
 
