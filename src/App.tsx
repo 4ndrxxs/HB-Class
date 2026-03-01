@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from '@/components/ui/sonner'
 import { useAuthStore } from '@/stores/authStore'
+import { initPushNotifications } from '@/lib/pushNotifications'
 import WeeklyPage from '@/pages/admin/WeeklyPage'
 import MonthlyPage from '@/pages/admin/MonthlyPage'
 import StudentsPage from '@/pages/admin/StudentsPage'
@@ -13,6 +14,7 @@ function App() {
 
   useEffect(() => {
     initialize()
+    initPushNotifications()
   }, [initialize])
 
   if (isLoading) {
