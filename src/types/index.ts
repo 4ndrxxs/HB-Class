@@ -16,6 +16,7 @@ export interface Student {
   name: string
   grade_level: GradeLevel
   parent_id: string | null
+  parent_phone: string | null
   memo: string | null
   created_at: string
 }

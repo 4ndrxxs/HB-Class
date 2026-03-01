@@ -32,6 +32,7 @@ export default function StudentForm({ open, onClose, editingStudent }: StudentFo
 
   const [name, setName] = useState('')
   const [gradeLevel, setGradeLevel] = useState<GradeLevel>('middle')
+  const [parentPhone, setParentPhone] = useState('')
   const [memo, setMemo] = useState('')
   const [schedules, setSchedules] = useState<ScheduleRow[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -42,6 +43,7 @@ export default function StudentForm({ open, onClose, editingStudent }: StudentFo
     if (editingStudent) {
       setName(editingStudent.name)
       setGradeLevel(editingStudent.grade_level as GradeLevel)
+      setParentPhone(editingStudent.parent_phone || '')
       setMemo(editingStudent.memo || '')
       setSchedules(
         editingStudent.regular_schedules.map((s) => ({
@@ -53,6 +55,7 @@ export default function StudentForm({ open, onClose, editingStudent }: StudentFo
     } else {
       setName('')
       setGradeLevel('middle')
+      setParentPhone('')
       setMemo('')
       setSchedules([])
     }
@@ -71,6 +74,7 @@ export default function StudentForm({ open, onClose, editingStudent }: StudentFo
       const studentData = {
         name: name.trim(),
         grade_level: gradeLevel,
+        parent_phone: parentPhone.trim() || null,
         memo: memo.trim() || null,
       }
 
@@ -126,6 +130,17 @@ export default function StudentForm({ open, onClose, editingStudent }: StudentFo
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Parent Phone */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">학부모 전화번호</label>
+            <Input
+              value={parentPhone}
+              onChange={(e) => setParentPhone(e.target.value)}
+              placeholder="01012345678"
+              type="tel"
+            />
           </div>
 
           {/* Memo */}

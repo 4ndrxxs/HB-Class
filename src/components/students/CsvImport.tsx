@@ -102,7 +102,7 @@ export default function CsvImport({ open, onClose }: CsvImportProps) {
     for (const row of validRows) {
       try {
         await addStudent(
-          { name: row.name, grade_level: row.grade_level, memo: row.memo || null },
+          { name: row.name, grade_level: row.grade_level, parent_phone: null, memo: row.memo || null },
           []
         )
         success++

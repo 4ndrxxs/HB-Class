@@ -1,10 +1,12 @@
 import { useEffect, useState, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isToday } from 'date-fns'
 import { ko } from 'date-fns/locale'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { supabase } from '@/lib/supabase'
+import { useAuthStore } from '@/stores/authStore'
 import { GRADE_LABELS, GRADE_BG_CLASSES, GRADE_TEXT_CLASSES, DAY_LABELS } from '@/lib/constants'
 import type { ScheduleEventWithStudent, GradeLevel, Student } from '@/types'
 
@@ -15,24 +17,32 @@ const STATUS_CONFIG = {
 } as const
 
 export default function ParentDashboard() {
+  const navigate = useNavigate()
+  const { profile, signOut } = useAuthStore()
   const [student, setStudent] = useState<Student | null>(null)
   const [events, setEvents] = useState<ScheduleEventWithStudent[]>([])
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(new Date()))
   const [isLoading, setIsLoading] = useState(true)
 
-  // Fetch student (for dev mode, show first student)
+  // Fetch student linked to this parent
   useEffect(() => {
     const loadStudent = async () => {
-      const { data } = await supabase
-        .from('students')
-        .select('*')
-        .limit(1)
-        .single()
+      if (!profile) {
+        setIsLoading(false)
+        return
+      }
+
+      // 인증된 학부모: parent_id로 조회, dev 모드: 첫 번째 학생
+      const query = profile.id === 'dev-admin'
+        ? supabase.from('students').select('*').limit(1).single()
+        : supabase.from('students').select('*').eq('parent_id', profile.id).limit(1).single()
+
+      const { data } = await query
       if (data) setStudent(data)
       setIsLoading(false)
     }
     loadStudent()
-  }, [])
+  }, [profile])
 
   // Fetch events for current month
   useEffect(() => {
@@ -98,11 +108,26 @@ export default function ParentDashboard() {
     <div className="max-w-lg mx-auto bg-white min-h-dvh">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white border-b px-4 py-3">
-        <div className="flex items-center gap-2">
-          <span className="text-lg font-bold">{student.name}</span>
-          <Badge className={`${GRADE_BG_CLASSES[grade]} ${GRADE_TEXT_CLASSES[grade]} border-0`}>
-            {GRADE_LABELS[grade]}
-          </Badge>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <img src="/logo-rounded.png" alt="HB Class" className="w-8 h-8" />
+            <span className="text-lg font-bold">{student.name}</span>
+            <Badge className={`${GRADE_BG_CLASSES[grade]} ${GRADE_TEXT_CLASSES[grade]} border-0`}>
+              {GRADE_LABELS[grade]}
+            </Badge>
+          </div>
+          {profile?.id !== 'dev-admin' && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={async () => {
+                await signOut()
+                navigate('/parent/login')
+              }}
+            >
+              <LogOut className="w-4 h-4" />
+            </Button>
+          )}
         </div>
       </div>
 

@@ -16,12 +16,12 @@ interface StudentState {
   setGradeFilter: (grade: string | null) => void
   fetchStudents: () => Promise<void>
   addStudent: (
-    student: Pick<Student, 'name' | 'grade_level' | 'memo'> & { phone?: string },
+    student: Pick<Student, 'name' | 'grade_level'> & { memo?: string | null; parent_phone?: string | null },
     schedules: Pick<RegularSchedule, 'day_of_week' | 'start_time' | 'end_time'>[]
   ) => Promise<void>
   updateStudent: (
     id: string,
-    student: Pick<Student, 'name' | 'grade_level' | 'memo'>,
+    student: Pick<Student, 'name' | 'grade_level'> & { memo?: string | null; parent_phone?: string | null },
     schedules: Pick<RegularSchedule, 'day_of_week' | 'start_time' | 'end_time'>[]
   ) => Promise<void>
   deleteStudent: (id: string) => Promise<void>
@@ -55,6 +55,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
       .insert({
         name: student.name,
         grade_level: student.grade_level,
+        parent_phone: student.parent_phone || null,
         memo: student.memo || null,
       })
       .select()
@@ -85,6 +86,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
       .update({
         name: student.name,
         grade_level: student.grade_level,
+        parent_phone: student.parent_phone || null,
         memo: student.memo || null,
       })
       .eq('id', id)

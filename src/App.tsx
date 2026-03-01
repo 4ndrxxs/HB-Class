@@ -8,6 +8,8 @@ import MonthlyPage from '@/pages/admin/MonthlyPage'
 import StudentsPage from '@/pages/admin/StudentsPage'
 import SettingsPage from '@/pages/admin/SettingsPage'
 import ParentDashboard from '@/pages/parent/ParentDashboard'
+import ParentLogin from '@/pages/parent/ParentLogin'
+import ParentRegister from '@/pages/parent/ParentRegister'
 
 function App() {
   const { isLoading, initialize } = useAuthStore()
@@ -28,11 +30,16 @@ function App() {
   return (
     <>
       <Routes>
+        {/* Admin routes */}
         <Route path="/" element={<Navigate to="/weekly" replace />} />
         <Route path="/weekly" element={<WeeklyPage />} />
         <Route path="/monthly" element={<MonthlyPage />} />
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+
+        {/* Parent routes */}
+        <Route path="/parent/login" element={<ParentLogin />} />
+        <Route path="/parent/register" element={<ParentRegister />} />
         <Route path="/parent" element={<ParentDashboard />} />
       </Routes>
       <Toaster />
