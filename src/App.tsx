@@ -6,6 +6,7 @@ import WeeklyPage from '@/pages/admin/WeeklyPage'
 import MonthlyPage from '@/pages/admin/MonthlyPage'
 import StudentsPage from '@/pages/admin/StudentsPage'
 import SettingsPage from '@/pages/admin/SettingsPage'
+import ParentDashboard from '@/pages/parent/ParentDashboard'
 
 function App() {
   const { isLoading, initialize } = useAuthStore()
@@ -30,6 +31,7 @@ function App() {
         <Route path="/monthly" element={<MonthlyPage />} />
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/parent" element={<ParentDashboard />} />
       </Routes>
       <Toaster />
     </>
