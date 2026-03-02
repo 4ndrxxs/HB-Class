@@ -11,6 +11,7 @@ interface AuthState {
   onboardingNeeded: boolean
 
   initialize: () => Promise<void>
+  listenAuthChanges: () => () => void
   setDevAdmin: () => void
   setOnboardingComplete: (profile: Profile) => void
   signOut: () => Promise<void>
@@ -85,6 +86,25 @@ export const useAuthStore = create<AuthState>((set) => ({
         onboardingNeeded: false,
       })
     }
+  },
+
+  listenAuthChanges: () => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        set({
+          profile: null,
+          role: 'admin',
+          isAuthenticated: false,
+          onboardingNeeded: false,
+        })
+      } else if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
+        // 세션 갱신 시 프로필 재확인
+        useAuthStore.getState().initialize()
+      }
+    })
+    return () => subscription.unsubscribe()
   },
 
   setDevAdmin: () => {

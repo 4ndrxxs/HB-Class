@@ -15,13 +15,15 @@ import ParentLogin from '@/pages/parent/ParentLogin'
 import ParentOnboarding from '@/pages/parent/ParentOnboarding'
 
 function App() {
-  const { isLoading, onboardingNeeded, profile, initialize } = useAuthStore()
+  const { isLoading, onboardingNeeded, profile, initialize, listenAuthChanges } = useAuthStore()
   const navigate = useNavigate()
 
   useEffect(() => {
     initialize()
     initPushNotifications()
-  }, [initialize])
+    const unsubscribe = listenAuthChanges()
+    return unsubscribe
+  }, [initialize, listenAuthChanges])
 
   // Native 딥링크 리스너 (OAuth 콜백)
   useEffect(() => {
@@ -32,6 +34,7 @@ function App() {
         try {
           await handleAuthCallback(event.url)
           await initialize()
+          navigate('/parent')
         } catch (err) {
           console.error('Auth callback error:', err)
           navigate('/parent/login')
@@ -51,6 +54,7 @@ function App() {
     if (hash && hash.includes('access_token')) {
       handleAuthCallback(window.location.href)
         .then(() => initialize())
+        .then(() => navigate('/parent'))
         .catch(() => navigate('/parent/login'))
     }
   }, [initialize, navigate])

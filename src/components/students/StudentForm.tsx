@@ -74,7 +74,7 @@ export default function StudentForm({ open, onClose, editingStudent }: StudentFo
       const studentData = {
         name: name.trim(),
         grade_level: gradeLevel,
-        parent_phone: parentPhone.trim() || null,
+        parent_phone: parentPhone.replace(/[^0-9]/g, '') || null,
         memo: memo.trim() || null,
       }
 

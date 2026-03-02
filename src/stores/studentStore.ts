@@ -55,7 +55,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
       .insert({
         name: student.name,
         grade_level: student.grade_level,
-        parent_phone: student.parent_phone || null,
+        parent_phone: student.parent_phone?.replace(/[^0-9]/g, '') || null,
         memo: student.memo || null,
       })
       .select()
@@ -86,7 +86,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
       .update({
         name: student.name,
         grade_level: student.grade_level,
-        parent_phone: student.parent_phone || null,
+        parent_phone: student.parent_phone?.replace(/[^0-9]/g, '') || null,
         memo: student.memo || null,
       })
       .eq('id', id)

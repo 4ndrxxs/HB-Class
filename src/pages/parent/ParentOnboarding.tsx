@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { completeProfile, verifyAcademyCode } from '@/lib/parentAuth'
@@ -10,6 +11,7 @@ import { CheckCircle } from 'lucide-react'
 type Step = 'profile' | 'academy'
 
 export default function ParentOnboarding() {
+  const navigate = useNavigate()
   const { setOnboardingComplete } = useAuthStore()
   const [step, setStep] = useState<Step>('profile')
   const [name, setName] = useState('')
@@ -70,9 +72,11 @@ export default function ParentOnboarding() {
           .single()
         if (profile) {
           setOnboardingComplete(profile)
+          toast.success('가입이 완료되었습니다!')
+          navigate('/parent')
+          return
         }
       }
-      toast.success('가입이 완료되었습니다!')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : '프로필 저장에 실패했습니다')
     } finally {
