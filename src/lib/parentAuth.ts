@@ -1,16 +1,11 @@
-import { supabase } from './supabase'
 import { Capacitor } from '@capacitor/core'
 import { Browser } from '@capacitor/browser'
+import { supabase } from './supabase'
 
 type OAuthProvider = 'google' | 'kakao'
 
 const REDIRECT_URL = 'com.hbclass.app://auth-callback'
 
-/**
- * OAuth 소셜 로그인 시작.
- * Native: URL을 받아서 Browser 플러그인으로 오픈.
- * Web: 기본 리다이렉트 동작 사용.
- */
 export async function signInWithProvider(provider: OAuthProvider) {
   if (Capacitor.isNativePlatform()) {
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -25,35 +20,44 @@ export async function signInWithProvider(provider: OAuthProvider) {
     if (!data.url) throw new Error('OAuth URL을 가져올 수 없습니다')
 
     await Browser.open({ url: data.url })
-  } else {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: window.location.origin + '/parent/auth-callback',
-      },
-    })
-    if (error) throw new Error(error.message)
+    return
   }
+
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: `${window.location.origin}/parent/auth-callback`,
+    },
+  })
+
+  if (error) throw new Error(error.message)
 }
 
-/**
- * OAuth 콜백 URL 처리.
- * URL fragment에서 access_token, refresh_token 추출 → 세션 설정.
- */
 export async function handleAuthCallback(url: string) {
-  const hashPart = url.includes('#') ? url.split('#')[1] : url.split('?')[1]
-  if (!hashPart) throw new Error('인증 콜백에 토큰 정보가 없습니다')
+  const parsedUrl = new URL(url)
+  const hashParams = new URLSearchParams(parsedUrl.hash.replace(/^#/, ''))
+  const searchParams = parsedUrl.searchParams
+  const getParam = (key: string) => hashParams.get(key) ?? searchParams.get(key)
 
-  const params = new URLSearchParams(hashPart)
-
-  const error = params.get('error')
+  const error = getParam('error')
   if (error) {
-    const description = params.get('error_description') || '인증에 실패했습니다'
+    const description = getParam('error_description') || '인증에 실패했습니다'
     throw new Error(description)
   }
 
-  const accessToken = params.get('access_token')
-  const refreshToken = params.get('refresh_token')
+  const code = getParam('code')
+  if (code) {
+    const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+    if (exchangeError) throw new Error(exchangeError.message)
+
+    if (Capacitor.isNativePlatform()) {
+      await Browser.close()
+    }
+    return
+  }
+
+  const accessToken = getParam('access_token')
+  const refreshToken = getParam('refresh_token')
 
   if (!accessToken || !refreshToken) {
     throw new Error('인증 토큰을 받지 못했습니다')
@@ -71,21 +75,14 @@ export async function handleAuthCallback(url: string) {
   }
 }
 
-/**
- * 프로필 완성 여부 확인.
- * name, phone, academy_id가 모두 있으면 완성된 프로필 반환.
- */
 export async function getCompletedProfile() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
   if (!user) return null
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
+  const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
 
   if (profile && profile.name && profile.phone && profile.academy_id) {
     return profile
@@ -94,9 +91,6 @@ export async function getCompletedProfile() {
   return null
 }
 
-/**
- * 학원 코드 검증.
- */
 export async function verifyAcademyCode(code: string) {
   const { data } = await supabase
     .from('academy_codes')
@@ -108,9 +102,6 @@ export async function verifyAcademyCode(code: string) {
   return data
 }
 
-/**
- * 프로필 완성 + 학생 자동 매칭.
- */
 export async function completeProfile(params: {
   name: string
   phone: string
@@ -119,6 +110,7 @@ export async function completeProfile(params: {
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
   if (!user) throw new Error('인증 정보를 찾을 수 없습니다')
 
   const normalizedPhone = params.phone.replace(/[^0-9]/g, '')
@@ -136,10 +128,10 @@ export async function completeProfile(params: {
     if (profileError.message.includes('duplicate') || profileError.message.includes('unique')) {
       throw new Error('이미 등록된 전화번호입니다')
     }
+
     throw new Error(profileError.message)
   }
 
-  // 전화번호로 학생 자동 매칭
   await supabase.from('students').update({ parent_id: user.id }).eq('parent_phone', normalizedPhone)
 
   return user
