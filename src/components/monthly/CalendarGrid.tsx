@@ -49,7 +49,7 @@ export default function CalendarGrid({ currentMonth, events, onDateClick }: Cale
           <div
             key={day}
             className={`text-center text-xs font-medium py-1 ${
-              day === 0 ? 'text-red-400' : day === 6 ? 'text-blue-400' : 'text-gray-500'
+              day === 0 ? 'text-rose-400' : day === 6 ? 'text-primary/70' : 'text-muted-foreground'
             }`}
           >
             {DAY_LABELS[day]}
@@ -58,7 +58,7 @@ export default function CalendarGrid({ currentMonth, events, onDateClick }: Cale
       </div>
 
       {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-px bg-gray-100 rounded-lg overflow-hidden">
+      <div className="grid grid-cols-7 gap-px bg-border/30 rounded-xl overflow-hidden">
         {calendarDays.map((day) => {
           const dateStr = format(day, 'yyyy-MM-dd')
           const dayEvents = eventsByDate[dateStr] || []
@@ -73,15 +73,15 @@ export default function CalendarGrid({ currentMonth, events, onDateClick }: Cale
             <button
               key={dateStr}
               onClick={() => onDateClick(day, dayEvents)}
-              className={`bg-white min-h-[60px] p-1 text-left transition-colors hover:bg-gray-50 ${
+              className={`bg-white min-h-[60px] p-1 text-left transition-colors hover:bg-muted/60 ${
                 !inMonth ? 'opacity-30' : ''
               }`}
             >
               <div
                 className={`text-xs font-medium mb-0.5 ${
                   today
-                    ? 'bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center'
-                    : 'text-gray-700'
+                    ? 'gradient-primary text-white w-5 h-5 rounded-full flex items-center justify-center'
+                    : 'text-foreground/80'
                 }`}
               >
                 {format(day, 'd')}
@@ -90,17 +90,17 @@ export default function CalendarGrid({ currentMonth, events, onDateClick }: Cale
               {inMonth && dayEvents.length > 0 && (
                 <div className="space-y-0.5">
                   {scheduledCount > 0 && (
-                    <div className="text-[9px] bg-blue-100 text-blue-700 rounded px-1 truncate">
+                    <div className="text-[9px] bg-indigo-50 text-indigo-600 rounded px-1 truncate">
                       수업 {scheduledCount}
                     </div>
                   )}
                   {completedCount > 0 && (
-                    <div className="text-[9px] bg-green-100 text-green-700 rounded px-1 truncate">
+                    <div className="text-[9px] bg-emerald-50 text-emerald-600 rounded px-1 truncate">
                       완료 {completedCount}
                     </div>
                   )}
                   {absentCount > 0 && (
-                    <div className="text-[9px] bg-red-100 text-red-700 rounded px-1 truncate">
+                    <div className="text-[9px] bg-rose-50 text-rose-600 rounded px-1 truncate">
                       결석 {absentCount}
                     </div>
                   )}

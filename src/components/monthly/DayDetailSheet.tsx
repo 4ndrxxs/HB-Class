@@ -19,9 +19,9 @@ interface DayDetailSheetProps {
 }
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
-  scheduled: { label: '예정', className: 'bg-blue-100 text-blue-700' },
-  completed: { label: '완료', className: 'bg-green-100 text-green-700' },
-  absent: { label: '결석', className: 'bg-red-100 text-red-700' },
+  scheduled: { label: '예정', className: 'bg-indigo-50 text-indigo-600' },
+  completed: { label: '완료', className: 'bg-emerald-50 text-emerald-600' },
+  absent: { label: '결석', className: 'bg-rose-50 text-rose-600' },
 }
 
 export default function DayDetailSheet({ date, events, open, onClose }: DayDetailSheetProps) {
@@ -31,7 +31,7 @@ export default function DayDetailSheet({ date, events, open, onClose }: DayDetai
 
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
-      <SheetContent side="bottom" className="h-[60dvh] rounded-t-2xl">
+      <SheetContent side="bottom" className="h-[60dvh] rounded-t-3xl">
         <SheetHeader>
           <SheetTitle>{format(date, 'M월 d일 (EEE)', { locale: ko })}</SheetTitle>
           <SheetDescription>총 {events.length}개 수업</SheetDescription>
@@ -46,8 +46,8 @@ export default function DayDetailSheet({ date, events, open, onClose }: DayDetai
               const status = STATUS_LABELS[event.status]
 
               return (
-                <div key={event.id} className="flex items-center gap-3 bg-gray-50 rounded-lg p-3">
-                  <div className="text-sm text-gray-500 shrink-0 w-20">
+                <div key={event.id} className="flex items-center gap-3 bg-muted/60 rounded-xl p-3">
+                  <div className="text-sm text-muted-foreground shrink-0 w-20">
                     {event.start_time.slice(0, 5)}~{event.end_time.slice(0, 5)}
                   </div>
                   <div className="flex-1 min-w-0">

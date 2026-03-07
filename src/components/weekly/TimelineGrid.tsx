@@ -90,13 +90,13 @@ export default function TimelineGrid({
     <div className="flex-1 overflow-auto">
       <div className="flex min-w-[500px]">
         {/* Time column */}
-        <div className="w-12 shrink-0 border-r bg-gray-50">
-          <div className="h-10 border-b" /> {/* Header spacer */}
+        <div className="w-12 shrink-0 border-r border-border/30 bg-muted/60">
+          <div className="h-10 border-b border-border/30" /> {/* Header spacer */}
           <div className="relative" style={{ height: `${gridHeight}px` }}>
             {hours.map((hour) => (
               <div
                 key={hour}
-                className="absolute w-full text-[10px] text-gray-400 text-right pr-1.5 -translate-y-1/2"
+                className="absolute w-full text-[10px] text-muted-foreground text-right pr-1.5 -translate-y-1/2"
                 style={{ top: `${(hour - startHour) * HOUR_HEIGHT}px` }}
               >
                 {hour}:00
@@ -111,15 +111,15 @@ export default function TimelineGrid({
           const today = isToday(col.date)
 
           return (
-            <div key={col.dateStr} className="flex-1 min-w-[80px] border-r last:border-r-0">
+            <div key={col.dateStr} className="flex-1 min-w-[80px] border-r border-border/30 last:border-r-0">
               {/* Day header */}
               <div
-                className={`h-10 flex flex-col items-center justify-center border-b text-xs ${
-                  today ? 'bg-blue-50 font-bold text-blue-600' : 'text-gray-600'
+                className={`h-10 flex flex-col items-center justify-center border-b border-border/30 text-xs ${
+                  today ? 'bg-primary/8 font-bold text-primary' : 'text-foreground/70'
                 }`}
               >
                 <span>{format(col.date, 'EEE', { locale: ko })}</span>
-                <span className={today ? 'text-blue-600' : 'text-gray-400'}>
+                <span className={today ? 'text-primary' : 'text-muted-foreground'}>
                   {format(col.date, 'd')}
                 </span>
               </div>
@@ -133,8 +133,8 @@ export default function TimelineGrid({
                   return (
                     <div
                       key={hour}
-                      className={`absolute w-full border-b border-gray-100 ${
-                        overCapacity ? 'bg-red-50' : ''
+                      className={`absolute w-full border-b border-border/30 ${
+                        overCapacity ? 'bg-destructive/8' : ''
                       }`}
                       style={{
                         top: `${(hour - startHour) * HOUR_HEIGHT}px`,
@@ -142,7 +142,7 @@ export default function TimelineGrid({
                       }}
                     >
                       {overCapacity && (
-                        <span className="absolute top-0 right-0.5 text-[9px] text-red-500 font-bold">
+                        <span className="absolute top-0 right-0.5 text-[9px] text-destructive font-bold">
                           {count}/{settings.max_capacity}
                         </span>
                       )}

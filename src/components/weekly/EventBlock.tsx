@@ -17,14 +17,14 @@ export default function EventBlock({ event, topPx, heightPx, onClick }: EventBlo
   return (
     <button
       onClick={() => onClick(event)}
-      className={`absolute left-0.5 right-0.5 rounded-md px-1.5 py-0.5 text-left overflow-hidden transition-opacity
+      className={`absolute left-0.5 right-0.5 rounded-xl px-1.5 py-0.5 text-left overflow-hidden transition-opacity shadow-sm border border-black/[0.04]
         ${GRADE_BG_CLASSES[grade]} ${GRADE_TEXT_CLASSES[grade]}
         ${isAbsent ? 'opacity-40 line-through' : ''}
         ${isMakeup ? 'border-2 border-dashed border-current' : ''}
       `}
       style={{ top: `${topPx}px`, height: `${Math.max(heightPx, 20)}px` }}
     >
-      <div className="text-xs font-semibold truncate leading-tight">
+      <div className="text-xs font-bold truncate leading-tight">
         {event.student.name}
         {isMakeup && ' (보강)'}
       </div>

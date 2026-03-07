@@ -85,13 +85,13 @@ export default function ParentOnboarding() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center px-6 bg-gray-50">
+    <div className="min-h-dvh flex flex-col items-center justify-center px-6 bg-background">
       <div className="w-full max-w-sm space-y-6">
         {/* Logo */}
         <div className="text-center space-y-2">
           <img src="/logo-rounded.png" alt="HB Class" className="w-20 h-20 mx-auto" />
-          <h1 className="text-xl font-bold text-gray-900">HB Class</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-xl font-bold text-foreground">HB Class</h1>
+          <p className="text-sm text-muted-foreground">
             {step === 'profile' ? '기본 정보를 입력하세요' : '학원 코드를 입력하세요'}
           </p>
         </div>
@@ -99,10 +99,10 @@ export default function ParentOnboarding() {
         {/* Step indicator */}
         <div className="flex items-center justify-center gap-2">
           <div
-            className={`w-8 h-1 rounded-full ${step === 'profile' ? 'bg-blue-600' : 'bg-blue-600'}`}
+            className={`w-8 h-1 rounded-full ${step === 'profile' ? 'bg-primary' : 'bg-primary'}`}
           />
           <div
-            className={`w-8 h-1 rounded-full ${step === 'academy' ? 'bg-blue-600' : 'bg-gray-200'}`}
+            className={`w-8 h-1 rounded-full ${step === 'academy' ? 'bg-primary' : 'bg-border'}`}
           />
         </div>
 
@@ -128,7 +128,7 @@ export default function ParentOnboarding() {
                 type="tel"
                 autoComplete="tel"
               />
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-muted-foreground">
                 학원에 등록된 전화번호를 입력하면 자녀가 자동으로 연결됩니다
               </p>
             </div>
@@ -162,15 +162,15 @@ export default function ParentOnboarding() {
                   </Button>
                 )}
               </div>
-              <p className="text-xs text-gray-400">소속 학원의 관리자에게 코드를 문의하세요</p>
+              <p className="text-xs text-muted-foreground">소속 학원의 관리자에게 코드를 문의하세요</p>
             </div>
 
             {academyId && (
-              <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg p-3">
-                <CheckCircle className="w-5 h-5 text-green-600 shrink-0" />
+              <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200/50 rounded-xl p-3">
+                <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
                 <div>
-                  <p className="text-sm text-green-700 font-medium">{academyName}</p>
-                  <p className="text-xs text-green-600">학원이 확인되었습니다</p>
+                  <p className="text-sm text-emerald-700 font-medium">{academyName}</p>
+                  <p className="text-xs text-emerald-600">학원이 확인되었습니다</p>
                 </div>
               </div>
             )}

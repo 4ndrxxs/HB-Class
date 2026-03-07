@@ -18,19 +18,19 @@ export default function ParentLogin() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center px-6 bg-gray-50">
+    <div className="min-h-dvh flex flex-col items-center justify-center px-6 bg-background">
       <div className="w-full max-w-sm space-y-8">
         {/* Logo */}
         <div className="text-center space-y-2">
           <img src="/logo-rounded.png" alt="HB Class" className="w-24 h-24 mx-auto" />
-          <h1 className="text-2xl font-bold text-gray-900">HB Class</h1>
-          <p className="text-sm text-gray-500">학부모 전용 앱</p>
+          <h1 className="text-2xl font-bold text-foreground">HB Class</h1>
+          <p className="text-sm text-muted-foreground">학부모 전용 앱</p>
         </div>
 
         {/* Social login buttons */}
         <div className="space-y-3">
           <Button
-            className="w-full h-12 bg-[#FEE500] text-[#191919] hover:bg-[#FDD835] gap-3 text-base font-medium"
+            className="w-full h-12 bg-[#FEE500] text-[#191919] hover:bg-[#FDD835] gap-3 text-base font-medium shadow-soft"
             onClick={() => handleSocialLogin('kakao')}
             disabled={isLoading !== null}
           >
@@ -44,7 +44,7 @@ export default function ParentLogin() {
           </Button>
 
           <Button
-            className="w-full h-12 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 gap-3 text-base font-medium"
+            className="w-full h-12 bg-white text-foreground border border-border hover:bg-muted gap-3 text-base font-medium shadow-soft"
             onClick={() => handleSocialLogin('google')}
             disabled={isLoading !== null}
           >
@@ -70,7 +70,7 @@ export default function ParentLogin() {
           </Button>
         </div>
 
-        <p className="text-center text-xs text-gray-400">
+        <p className="text-center text-xs text-muted-foreground">
           로그인하면 서비스 이용약관에 동의하게 됩니다
         </p>
       </div>

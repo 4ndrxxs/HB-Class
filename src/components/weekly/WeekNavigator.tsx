@@ -15,19 +15,22 @@ export default function WeekNavigator({ weekStart, onPrev, onNext, onToday }: We
   const isCurrentWeek = isThisWeek(weekStart, { weekStartsOn: 1 })
 
   return (
-    <div className="flex items-center justify-between px-4 py-2 border-b">
+    <div className="flex items-center justify-between px-4 py-2 border-b border-border/40">
       <Button variant="ghost" size="icon" onClick={onPrev}>
         <ChevronLeft className="w-5 h-5" />
       </Button>
 
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium">
+        <span className="text-sm font-semibold">
           {format(weekStart, 'M.d', { locale: ko })} ~ {format(weekEnd, 'M.d', { locale: ko })}
         </span>
         {!isCurrentWeek && (
-          <Button variant="outline" size="sm" onClick={onToday} className="text-xs h-6 px-2">
+          <button
+            onClick={onToday}
+            className="rounded-full bg-primary/10 text-primary text-xs px-3 h-7 font-medium hover:bg-primary/20 transition-colors"
+          >
             오늘
-          </Button>
+          </button>
         )}
       </div>
 

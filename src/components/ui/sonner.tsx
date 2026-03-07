@@ -9,8 +9,9 @@ function Toaster() {
       toastOptions={{
         style: {
           background: "white",
-          border: "1px solid #e5e5e5",
-          color: "#0a0a0a",
+          border: "1px solid #E5E7EB",
+          color: "#1B1D2A",
+          borderRadius: "1rem",
         },
       }}
     />

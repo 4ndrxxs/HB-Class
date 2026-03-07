@@ -1,9 +1,9 @@
 import type { GradeLevel } from '@/types'
 
 export const GRADE_COLORS: Record<GradeLevel, string> = {
-  elementary: '#FCD34D',
-  middle: '#60A5FA',
-  high: '#F87171',
+  elementary: '#FDE68A',
+  middle: '#93C5FD',
+  high: '#FCA5A5',
 }
 
 export const GRADE_LABELS: Record<GradeLevel, string> = {
@@ -13,15 +13,15 @@ export const GRADE_LABELS: Record<GradeLevel, string> = {
 }
 
 export const GRADE_BG_CLASSES: Record<GradeLevel, string> = {
-  elementary: 'bg-yellow-300/80',
-  middle: 'bg-blue-400/80',
-  high: 'bg-red-400/80',
+  elementary: 'bg-amber-100',
+  middle: 'bg-blue-100',
+  high: 'bg-rose-100',
 }
 
 export const GRADE_TEXT_CLASSES: Record<GradeLevel, string> = {
-  elementary: 'text-yellow-900',
-  middle: 'text-blue-900',
-  high: 'text-red-900',
+  elementary: 'text-amber-700',
+  middle: 'text-blue-700',
+  high: 'text-rose-700',
 }
 
 export const DAY_LABELS = ['일', '월', '화', '수', '목', '금', '토']

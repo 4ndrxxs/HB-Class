@@ -67,7 +67,7 @@ export default function StudentList() {
       <div className="px-4 pt-3 pb-2 space-y-2">
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -94,10 +94,10 @@ export default function StudentList() {
             <button
               key={filter.value ?? 'all'}
               onClick={() => setGradeFilter(filter.value)}
-              className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex-1 py-1.5 rounded-xl text-sm font-medium transition-colors ${
                 gradeFilter === filter.value
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'gradient-primary text-white'
+                  : 'bg-muted text-muted-foreground hover:bg-accent'
               }`}
             >
               {filter.label}

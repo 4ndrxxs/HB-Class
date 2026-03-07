@@ -49,10 +49,10 @@ export default function ScheduleInput({ schedules, onChange }: ScheduleInputProp
                 addSchedule(day)
               }
             }}
-            className={`flex-1 py-1.5 rounded-md text-sm font-medium transition-colors ${
+            className={`flex-1 py-1.5 rounded-xl text-sm font-medium transition-colors ${
               selectedDays.has(day)
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                ? 'gradient-primary text-white'
+                : 'bg-muted text-muted-foreground hover:bg-accent'
             }`}
           >
             {DAY_LABELS[day]}
@@ -64,7 +64,7 @@ export default function ScheduleInput({ schedules, onChange }: ScheduleInputProp
       {schedules
         .sort((a, b) => a.day_of_week - b.day_of_week)
         .map((schedule, index) => (
-          <div key={index} className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+          <div key={index} className="flex items-center gap-2 bg-muted/50 rounded-xl px-3 py-2">
             <Badge variant="secondary" className="shrink-0">
               {DAY_LABELS[schedule.day_of_week]}
             </Badge>
@@ -74,7 +74,7 @@ export default function ScheduleInput({ schedules, onChange }: ScheduleInputProp
               onChange={(e) => updateTime(index, 'start_time', e.target.value)}
               className="flex-1 bg-white border rounded-md px-2 py-1 text-sm"
             />
-            <span className="text-gray-400">~</span>
+            <span className="text-muted-foreground">~</span>
             <input
               type="time"
               value={schedule.end_time}
@@ -84,7 +84,7 @@ export default function ScheduleInput({ schedules, onChange }: ScheduleInputProp
             <button
               type="button"
               onClick={() => removeSchedule(index)}
-              className="text-gray-400 hover:text-red-500 p-0.5"
+              className="text-muted-foreground hover:text-destructive p-0.5"
             >
               <X className="w-4 h-4" />
             </button>

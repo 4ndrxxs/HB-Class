@@ -41,7 +41,7 @@ export default function EventDetailSheet({ event, open, onClose }: EventDetailSh
 
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
-      <SheetContent side="bottom" className="rounded-t-2xl">
+      <SheetContent side="bottom" className="rounded-t-3xl">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             {event.student.name}
@@ -87,7 +87,7 @@ export default function EventDetailSheet({ event, open, onClose }: EventDetailSh
             <Button
               variant={event.status === 'completed' ? 'default' : 'outline'}
               onClick={() => handleStatus('completed')}
-              className="text-sm bg-green-600 hover:bg-green-700 text-white"
+              className="text-sm bg-emerald-500 hover:bg-emerald-600 text-white"
               disabled={event.status === 'completed'}
             >
               완료

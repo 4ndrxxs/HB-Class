@@ -11,9 +11,9 @@ import { GRADE_LABELS, GRADE_BG_CLASSES, GRADE_TEXT_CLASSES, DAY_LABELS } from '
 import type { ScheduleEventWithStudent, GradeLevel, Student } from '@/types'
 
 const STATUS_CONFIG = {
-  scheduled: { label: '예정', dot: 'bg-blue-500' },
-  completed: { label: '완료', dot: 'bg-green-500' },
-  absent: { label: '결석', dot: 'bg-red-500' },
+  scheduled: { label: '예정', dot: 'bg-indigo-500' },
+  completed: { label: '완료', dot: 'bg-emerald-500' },
+  absent: { label: '결석', dot: 'bg-rose-500' },
 } as const
 
 export default function ParentDashboard() {
@@ -105,13 +105,13 @@ export default function ParentDashboard() {
   const grade = student.grade_level as GradeLevel
 
   return (
-    <div className="max-w-lg mx-auto bg-white min-h-dvh">
+    <div className="max-w-lg mx-auto bg-background min-h-dvh">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white border-b px-4 py-3">
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b border-border/40 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src="/logo-rounded.png" alt="HB Class" className="w-8 h-8" />
-            <span className="text-lg font-bold">{student.name}</span>
+            <span className="text-lg font-semibold tracking-tight">{student.name}</span>
             <Badge className={`${GRADE_BG_CLASSES[grade]} ${GRADE_TEXT_CLASSES[grade]} border-0`}>
               {GRADE_LABELS[grade]}
             </Badge>
@@ -133,17 +133,17 @@ export default function ParentDashboard() {
 
       {/* Month stats summary */}
       <div className="grid grid-cols-3 gap-2 p-4">
-        <div className="bg-blue-50 rounded-xl p-3 text-center">
-          <div className="text-2xl font-bold text-blue-600">{totalClasses}</div>
-          <div className="text-xs text-blue-600/70">전체 수업</div>
+        <div className="bg-indigo-50/80 rounded-2xl p-3 text-center">
+          <div className="text-2xl font-bold text-indigo-600">{totalClasses}</div>
+          <div className="text-xs text-indigo-600/70">전체 수업</div>
         </div>
-        <div className="bg-green-50 rounded-xl p-3 text-center">
-          <div className="text-2xl font-bold text-green-600">{completedCount}</div>
-          <div className="text-xs text-green-600/70">완료</div>
+        <div className="bg-emerald-50/80 rounded-2xl p-3 text-center">
+          <div className="text-2xl font-bold text-emerald-600">{completedCount}</div>
+          <div className="text-xs text-emerald-600/70">완료</div>
         </div>
-        <div className="bg-red-50 rounded-xl p-3 text-center">
-          <div className="text-2xl font-bold text-red-600">{absentCount}</div>
-          <div className="text-xs text-red-600/70">결석</div>
+        <div className="bg-rose-50/80 rounded-2xl p-3 text-center">
+          <div className="text-2xl font-bold text-rose-600">{absentCount}</div>
+          <div className="text-xs text-rose-600/70">결석</div>
         </div>
       </div>
 
@@ -164,7 +164,7 @@ export default function ParentDashboard() {
       <div className="px-4 pb-2">
         <div className="grid grid-cols-7 mb-1">
           {[1, 2, 3, 4, 5, 6, 0].map((day) => (
-            <div key={day} className="text-center text-[10px] font-medium text-gray-400 py-1">
+            <div key={day} className="text-center text-[10px] font-medium text-muted-foreground py-1">
               {DAY_LABELS[day]}
             </div>
           ))}
@@ -183,7 +183,7 @@ export default function ParentDashboard() {
               >
                 <div
                   className={`text-xs mx-auto w-6 h-6 flex items-center justify-center rounded-full ${
-                    today ? 'bg-blue-600 text-white font-bold' : 'text-gray-700'
+                    today ? 'gradient-primary text-white font-bold' : 'text-foreground/80'
                   }`}
                 >
                   {format(day, 'd')}
@@ -206,7 +206,7 @@ export default function ParentDashboard() {
 
       {/* Upcoming events list */}
       <div className="px-4 pb-20">
-        <h3 className="text-sm font-semibold text-gray-900 mb-2">
+        <h3 className="text-sm font-semibold text-foreground mb-2">
           {format(currentMonth, 'M월', { locale: ko })} 수업 일정
         </h3>
         <div className="space-y-1.5">
@@ -216,21 +216,21 @@ export default function ParentDashboard() {
             events.map((event) => {
               const config = STATUS_CONFIG[event.status]
               return (
-                <div key={event.id} className="flex items-center gap-3 bg-gray-50 rounded-lg px-3 py-2.5">
+                <div key={event.id} className="flex items-center gap-3 bg-muted/60 rounded-xl px-3 py-2.5">
                   <span className={`w-2 h-2 rounded-full shrink-0 ${config.dot}`} />
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium">
                       {format(new Date(event.date), 'M/d (EEE)', { locale: ko })}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-muted-foreground">
                       {event.start_time.slice(0, 5)} ~ {event.end_time.slice(0, 5)}
                       {event.type === 'makeup' && ' (보강)'}
                     </div>
                   </div>
                   <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                    event.status === 'absent' ? 'bg-red-100 text-red-700' :
-                    event.status === 'completed' ? 'bg-green-100 text-green-700' :
-                    'bg-blue-100 text-blue-700'
+                    event.status === 'absent' ? 'bg-rose-50 text-rose-600' :
+                    event.status === 'completed' ? 'bg-emerald-50 text-emerald-600' :
+                    'bg-indigo-50 text-indigo-600'
                   }`}>
                     {config.label}
                   </span>

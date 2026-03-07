@@ -123,7 +123,7 @@ export default function CsvImport({ open, onClose }: CsvImportProps) {
 
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
-      <SheetContent side="bottom" className="h-[70dvh] rounded-t-2xl">
+      <SheetContent side="bottom" className="h-[70dvh] rounded-t-3xl">
         <SheetHeader>
           <SheetTitle>CSV 가져오기</SheetTitle>
           <SheetDescription>CSV 형식: 이름,학년(초등/중등/고등),메모</SheetDescription>
@@ -132,7 +132,7 @@ export default function CsvImport({ open, onClose }: CsvImportProps) {
         <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-4">
           {/* File input */}
           <div className="border-2 border-dashed rounded-xl p-6 text-center space-y-2">
-            <Upload className="w-8 h-8 mx-auto text-gray-400" />
+            <Upload className="w-8 h-8 mx-auto text-muted-foreground" />
             <p className="text-sm text-muted-foreground">CSV 파일을 선택하세요</p>
             <input
               ref={fileRef}
@@ -147,9 +147,9 @@ export default function CsvImport({ open, onClose }: CsvImportProps) {
           {rows.length > 0 && (
             <>
               <div className="flex items-center gap-3 text-sm">
-                <span className="text-green-600 font-medium">가져올 수 있음: {validCount}명</span>
+                <span className="text-emerald-600 font-medium">가져올 수 있음: {validCount}명</span>
                 {invalidCount > 0 && (
-                  <span className="text-red-500 font-medium">오류: {invalidCount}건</span>
+                  <span className="text-rose-500 font-medium">오류: {invalidCount}건</span>
                 )}
               </div>
 
@@ -158,18 +158,18 @@ export default function CsvImport({ open, onClose }: CsvImportProps) {
                   <div
                     key={i}
                     className={`px-3 py-2 text-sm flex items-center justify-between ${
-                      row.valid ? '' : 'bg-red-50'
+                      row.valid ? '' : 'bg-rose-50'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{row.name || '(빈 이름)'}</span>
                       {row.valid && (
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-muted-foreground">
                           {GRADE_LABELS[row.grade_level]}
                         </span>
                       )}
                     </div>
-                    {row.error && <span className="text-xs text-red-500">{row.error}</span>}
+                    {row.error && <span className="text-xs text-rose-500">{row.error}</span>}
                   </div>
                 ))}
               </div>
